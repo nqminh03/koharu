@@ -231,6 +231,11 @@
     "unlock": "{{name}}のロックを解除",
     "unlocked": "ロックなし"
   },
+  "liveTranslation": {
+    "noDisplays": "キャプチャできるディスプレイがありません。",
+    "start": "画面のライブ翻訳を開始",
+    "stop": "画面のライブ翻訳を停止"
+  },
   "menu": {
     "about": "Koharuについて",
     "closeProject": "プロジェクトを閉じる",

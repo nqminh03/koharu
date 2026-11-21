@@ -15,6 +15,7 @@ publish.workspace = true
 alphanumeric-sort = { workspace = true }
 anyhow = { workspace = true }
 arboard = { workspace = true }
+blake3 = { workspace = true }
 cef = { workspace = true }
 dirs = { workspace = true }
 fs-err = { workspace = true }
@@ -47,6 +48,7 @@ specta = { workspace = true }
 specta-serde = { workspace = true }
 specta-typescript = { workspace = true }
 specta-util = { workspace = true }
+tempfile = { workspace = true }
 tauri = { workspace = true }
 tauri-plugin-log = { workspace = true }
 tauri-plugin-opener = { workspace = true }
@@ -62,6 +64,7 @@ tracing = { workspace = true }
 ui-events = { workspace = true }
 webp = { workspace = true }
 wgpu = { workspace = true }
+xcap = { workspace = true }
 zip = { workspace = true }
 
 [target.'cfg(windows)'.dependencies]

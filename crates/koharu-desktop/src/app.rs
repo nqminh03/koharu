@@ -20,6 +20,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Manager as _};
 use tauri_runtime_cef::CefRuntime;
 use tokio::sync::broadcast::{Receiver, error::RecvError};
+use tokio_util::sync::CancellationToken;
 use tokio_util::task::AbortOnDropHandle;
 
 use crate::{
@@ -33,6 +34,8 @@ pub struct App {
     pub renderer: Renderer,
     pub pipeline: Pipeline,
     pub screen: Screen,
+    pub live_cancel: Mutex<Option<(u64, CancellationToken)>>,
+    pub live_generation: std::sync::atomic::AtomicU64,
     pub project: Mutex<Option<Project>>,
     /// Set once the window's app starts, before anything is told.
     handle: OnceLock<AppHandle<CefRuntime>>,
@@ -60,6 +63,8 @@ impl App {
             library,
             renderer,
             screen: Screen::default(),
+            live_cancel: Mutex::new(None),
+            live_generation: std::sync::atomic::AtomicU64::new(0),
             pipeline,
             project: Mutex::new(None),
             handle: OnceLock::new(),
@@ -111,6 +116,10 @@ impl App {
         if let Some(handle) = self.handle.get() {
             event.tell(handle, payload);
         }
+    }
+
+    pub fn app_handle(&self) -> Result<AppHandle<CefRuntime>> {
+        self.handle.get().cloned().context("the app hasn't started")
     }
 
     /// Brings the window forward, for Koharu launched again while it runs.

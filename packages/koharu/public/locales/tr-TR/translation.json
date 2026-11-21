@@ -231,6 +231,11 @@
     "unlock": "{{name}} öğesinin kilidini aç",
     "unlocked": "Kilitsiz"
   },
+  "liveTranslation": {
+    "noDisplays": "Yakalama için kullanılabilir ekran yok.",
+    "start": "Canlı ekran çevirisini başlat",
+    "stop": "Canlı ekran çevirisini durdur"
+  },
   "menu": {
     "about": "Hakkında",
     "closeProject": "Projeyi Kapat",

@@ -2,13 +2,19 @@
 
 import * as Sentry from '@sentry/nextjs'
 import { openUrl } from '@tauri-apps/plugin-opener'
-import { FilePlus2, FolderOpen, LoaderCircle } from 'lucide-react'
+import { FilePlus2, FolderOpen, Languages, LoaderCircle } from 'lucide-react'
 import Image from 'next/image'
-import { useState, type ComponentProps } from 'react'
+import { useEffect, useState, type ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { AboutDialog } from '@/components/app/AboutDialog'
 import { useMacOS, WindowControls } from '@/components/app/WindowChrome'
+import {
+  liveMonitors,
+  onLiveTranslationStatus,
+  startLiveTranslation,
+  stopLiveTranslation,
+} from '@/lib/liveTranslation'
 import { send, useCommand, useImportPages, usePage, useProject } from '@/lib/queries'
 import { deleteSelection } from '@/lib/scene'
 import { shortcutLabel, shortcuts } from '@/lib/shortcuts'
@@ -27,11 +33,13 @@ import {
   MenubarSubTrigger,
   MenubarTrigger as UiMenubarTrigger,
 } from '@koharu/ui/components/menubar'
+import { toast } from '@koharu/ui/components/toast'
 import { cn } from '@koharu/ui/lib/utils'
 
 export function TitleBar() {
   const { t } = useTranslation()
   const [aboutOpen, setAboutOpen] = useState(false)
+  const [liveTranslation, setLiveTranslation] = useState(false)
   const macOS = useMacOS()
   const project = useProject().data
   const pageQuery = usePage(Boolean(project))
@@ -50,6 +58,21 @@ export function TitleBar() {
     commands.export,
     'menu.export',
   )
+
+  useEffect(() => {
+    let disposed = false
+    let unlisten: (() => void) | undefined
+    void onLiveTranslationStatus(setLiveTranslation)
+      .then((stop) => {
+        if (disposed) stop()
+        else unlisten = stop
+      })
+      .catch(() => undefined)
+    return () => {
+      disposed = true
+      unlisten?.()
+    }
+  }, [])
 
   const psdLabels = {
     background: t('psd.background'),
@@ -88,6 +111,23 @@ export function TitleBar() {
     })
     form.appendToDom()
     form.open()
+  }
+
+  const toggleLiveTranslation = async () => {
+    try {
+      if (liveTranslation) {
+        await stopLiveTranslation()
+        return
+      }
+      const monitors = await liveMonitors()
+      const monitor = monitors.find((candidate) => candidate.is_primary) ?? monitors[0]
+      if (!monitor) throw new Error(t('liveTranslation.noDisplays'))
+      await startLiveTranslation(monitor.index)
+    } catch (error) {
+      const description = error instanceof Error ? error.message : String(error)
+      // Uses the same unobtrusive failure toast as other failed commands.
+      toast.add({ type: 'error', title: t('errors.actionFailed'), description })
+    }
   }
 
   return (
@@ -206,6 +246,11 @@ export function TitleBar() {
           <MenubarMenu>
             <MenubarTrigger>{t('menu.view')}</MenubarTrigger>
             <MenubarContent>
+              <MenubarItem onClick={() => void toggleLiveTranslation()}>
+                <Languages />
+                {t(liveTranslation ? 'liveTranslation.stop' : 'liveTranslation.start')}
+              </MenubarItem>
+              <MenubarSeparator />
               <MenubarItem disabled={!page} onClick={() => send(commands.fit)}>
                 {t('menu.fit')}
                 <MenubarShortcut>{shortcutLabel(shortcuts.fit)}</MenubarShortcut>

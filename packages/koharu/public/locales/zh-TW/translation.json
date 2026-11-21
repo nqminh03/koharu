@@ -231,6 +231,11 @@
     "unlock": "解鎖 {{name}}",
     "unlocked": "未鎖定"
   },
+  "liveTranslation": {
+    "noDisplays": "沒有可擷取的顯示器。",
+    "start": "開始即時螢幕翻譯",
+    "stop": "停止即時螢幕翻譯"
+  },
   "menu": {
     "about": "關於",
     "closeProject": "關閉專案",

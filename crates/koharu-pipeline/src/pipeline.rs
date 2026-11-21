@@ -102,6 +102,11 @@ impl Pipeline {
         self.send(Command::Stop);
     }
 
+    /// Stops one queued or running run without affecting others.
+    pub fn stop_run(&self, run: RunId) {
+        self.send(Command::StopRun(run));
+    }
+
     /// Unloads every model once the GPU's current work ends, as ComfyUI's
     /// Unload Models does.
     pub fn unload(&self) {

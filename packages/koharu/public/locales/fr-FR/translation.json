@@ -231,6 +231,11 @@
     "unlock": "Déverrouiller {{name}}",
     "unlocked": "Déverrouillé"
   },
+  "liveTranslation": {
+    "noDisplays": "Aucun écran n’est disponible pour la capture.",
+    "start": "Démarrer la traduction d’écran en direct",
+    "stop": "Arrêter la traduction d’écran en direct"
+  },
   "menu": {
     "about": "À propos",
     "closeProject": "Fermer le projet",

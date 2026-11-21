@@ -68,6 +68,25 @@ pub const PIPELINE: Event<PipelineEvent> = Event::new("pipeline");
 /// A model or font file's download, as it goes.
 pub const DOWNLOAD: Event<Transfer> = Event::new("download");
 
+#[derive(Clone, Debug, Serialize, specta::Type)]
+pub struct LiveTranslationFrame {
+    pub scale_factor: f64,
+    pub lines: Vec<LiveTranslationLine>,
+}
+
+#[derive(Clone, Debug, Serialize, specta::Type)]
+pub struct LiveTranslationLine {
+    pub text: String,
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
+pub const LIVE_TRANSLATION_FRAME: Event<LiveTranslationFrame> =
+    Event::new("live-translation-frame");
+pub const LIVE_TRANSLATION_STATUS: Event<bool> = Event::new("live-translation-status");
+
 /// Every event's name and payload, for the bindings.
 pub fn bindings(types: &mut Types) -> Vec<(&'static str, DataType)> {
     vec![
@@ -84,5 +103,7 @@ pub fn bindings(types: &mut Types) -> Vec<(&'static str, DataType)> {
         NOTICE.binding(types),
         PIPELINE.binding(types),
         DOWNLOAD.binding(types),
+        LIVE_TRANSLATION_FRAME.binding(types),
+        LIVE_TRANSLATION_STATUS.binding(types),
     ]
 }

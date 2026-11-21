@@ -231,6 +231,11 @@
     "unlock": "{{name}} 잠금 해제",
     "unlocked": "잠금 해제됨"
   },
+  "liveTranslation": {
+    "noDisplays": "캡처할 수 있는 디스플레이가 없습니다.",
+    "start": "실시간 화면 번역 시작",
+    "stop": "실시간 화면 번역 중지"
+  },
   "menu": {
     "about": "정보",
     "closeProject": "프로젝트 닫기",

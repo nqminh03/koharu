@@ -471,6 +471,28 @@ export type Layer<
 /**  A layer; stored, so it survives undo. */
 export type LayerId = string
 
+export type LiveMonitor = {
+  index: number
+  name: string
+  width: number
+  height: number
+  scale_factor: number
+  is_primary: boolean
+}
+
+export type LiveTranslationFrame = {
+  scale_factor: number
+  lines: LiveTranslationLine[]
+}
+
+export type LiveTranslationLine = {
+  text: string
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
 /**
  *  Grey pixels that limit its parent's visibility, as Photoshop's and Clip
  *  Studio Paint's layer masks do; never drawn. Masks apply in order.
@@ -1060,6 +1082,16 @@ export const commands = {
   /** Picks files or a folder and adds their pages after the project's last: the files in name order, numbers by value, an archive's or a PDF's own pages in theirs. */
   import: (source: ImportSource) =>
     runner('import', (options) => invoke<null>('import', { source }, options)),
+  liveMonitors: () =>
+    runner('live_monitors', (options) => invoke<LiveMonitor[]>('live_monitors', {}, options)),
+  startLiveTranslation: (monitorIndex: number) =>
+    runner('start_live_translation', (options) =>
+      invoke<null>('start_live_translation', { monitorIndex }, options),
+    ),
+  stopLiveTranslation: () =>
+    runner('stop_live_translation', (options) =>
+      invoke<null>('stop_live_translation', {}, options),
+    ),
   /** Picks where the open project's pages go, and writes them there. `labels` names a PSD's layers the scene names nothing, in the interface's language. */
   export: (format: ExportFormat, labels: Labels) =>
     runner('export', (options) => invoke<null>('export', { format, labels }, options)),
@@ -1122,4 +1154,8 @@ export const events = {
     listen<PipelineEvent>('pipeline', (event) => handler(event.payload)),
   download: (handler: (payload: Transfer) => void): Promise<UnlistenFn> =>
     listen<Transfer>('download', (event) => handler(event.payload)),
+  liveTranslationFrame: (handler: (payload: LiveTranslationFrame) => void): Promise<UnlistenFn> =>
+    listen<LiveTranslationFrame>('live-translation-frame', (event) => handler(event.payload)),
+  liveTranslationStatus: (handler: (payload: boolean) => void): Promise<UnlistenFn> =>
+    listen<boolean>('live-translation-status', (event) => handler(event.payload)),
 }

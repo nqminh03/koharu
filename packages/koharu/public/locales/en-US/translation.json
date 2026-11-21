@@ -135,6 +135,11 @@
     },
     "title": "History"
   },
+  "liveTranslation": {
+    "noDisplays": "No display is available for capture.",
+    "start": "Start live screen translation",
+    "stop": "Stop live screen translation"
+  },
   "inference": {
     "entireProject": "Entire project",
     "entireProjectDescription": "Process every page in this project.",

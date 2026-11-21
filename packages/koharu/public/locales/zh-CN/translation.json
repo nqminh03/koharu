@@ -231,6 +231,11 @@
     "unlock": "解锁 {{name}}",
     "unlocked": "未锁定"
   },
+  "liveTranslation": {
+    "noDisplays": "没有可供捕获的显示器。",
+    "start": "开始实时屏幕翻译",
+    "stop": "停止实时屏幕翻译"
+  },
   "menu": {
     "about": "关于",
     "closeProject": "关闭项目",

@@ -7,6 +7,7 @@ mod debug;
 mod export;
 mod fonts;
 mod import;
+mod live;
 mod pages;
 mod preferences;
 mod processing;
@@ -87,6 +88,9 @@ pub fn handler() -> impl Fn(Invoke<CefRuntime>) -> bool + Send + Sync + 'static 
         fonts::list_fonts,
         fonts::get_font_preview,
         import::import,
+        live::live_monitors,
+        live::start_live_translation,
+        live::stop_live_translation,
         export::export,
         canvas::set_viewport,
         canvas::set_tool,
@@ -158,6 +162,9 @@ pub fn bindings(types: &mut Types) -> Vec<Function> {
         fonts::list_fonts,
         fonts::get_font_preview,
         import::import,
+        live::live_monitors,
+        live::start_live_translation,
+        live::stop_live_translation,
         export::export,
         canvas::set_viewport,
         canvas::set_tool,

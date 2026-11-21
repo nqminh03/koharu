@@ -44,6 +44,7 @@ const KEEP: Duration = Duration::from_secs(5 * 60);
 pub(crate) enum Command {
     Run(Run),
     Stop,
+    StopRun(RunId),
     Unload,
     /// The settings changed: unload what nothing uses now.
     Settle,
@@ -169,6 +170,22 @@ impl Scheduler {
                 }
                 self.rest();
             }
+            Command::StopRun(id) => {
+                let Some(at) = self.runs.iter().position(|run| run.id == id) else {
+                    return;
+                };
+                let run = &self.runs[at];
+                run.cancel.cancel();
+                let running = run.graph.node_weights().any(|job| job.running);
+                if !running {
+                    self.runs.remove(at);
+                    self.emit(Event::Ended {
+                        run: id,
+                        outcome: Outcome::Stopped,
+                    });
+                    self.rest();
+                }
+            }
             Command::Unload => self
                 .gpu
                 .run(Turn::Upkeep, |models| models.retain(&HashSet::new())),
@@ -206,7 +223,16 @@ impl Scheduler {
                             });
                         }
                     }
-                    if run.graph.node_count() == 0 {
+                    if run.cancel.is_cancelled() && run.graph.node_weights().any(|job| job.running)
+                    {
+                        self.runs.push(run);
+                    } else if run.cancel.is_cancelled() {
+                        ended = true;
+                        self.emit(Event::Ended {
+                            run: run.id,
+                            outcome: Outcome::Stopped,
+                        });
+                    } else if run.graph.node_count() == 0 {
                         ended = true;
                         self.emit(Event::Ended {
                             run: run.id,
@@ -221,14 +247,19 @@ impl Scheduler {
                 for run in runs {
                     if jobs.iter().any(|&(id, _)| id == run.id) {
                         ended = true;
-                        run.cancel.cancel();
-                        self.emit(Event::Ended {
-                            run: run.id,
-                            outcome: Outcome::Failed {
+                        let outcome = if run.cancel.is_cancelled() {
+                            Outcome::Stopped
+                        } else {
+                            run.cancel.cancel();
+                            Outcome::Failed {
                                 page,
                                 stage,
                                 reason: reason.clone(),
-                            },
+                            }
+                        };
+                        self.emit(Event::Ended {
+                            run: run.id,
+                            outcome,
                         });
                     } else {
                         self.runs.push(run);
@@ -272,7 +303,7 @@ impl Scheduler {
                     let node = &run.graph[job];
                     let held =
                         node.stage == Stage::Translate && self.conversations.busy(run.project);
-                    (!node.running && !held).then_some(Candidate {
+                    (!run.cancel.is_cancelled() && !node.running && !held).then_some(Candidate {
                         run: at,
                         job,
                         stage: node.stage,

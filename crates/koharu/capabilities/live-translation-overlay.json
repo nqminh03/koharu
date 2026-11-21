@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "live-translation-overlay",
+  "description": "Allows the live translation overlay to receive translation frames.",
+  "windows": ["live-translation-overlay"],
+  "permissions": ["core:event:default"]
+}

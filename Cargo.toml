@@ -186,6 +186,7 @@ vello_cpu = { version = "0.4.0", default-features = false, features = ["std", "u
 vello_gpu = "0.4.0"
 webp = { version = "0.3.1" }
 wgpu = "30.0.1"
+xcap = { version = "0.9.10", features = ["wgc"] }
 winit = "0.30.13"
 windows = { version = "0.62.2", features = [
     "Win32",

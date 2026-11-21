@@ -231,6 +231,11 @@
     "unlock": "Desbloquear {{name}}",
     "unlocked": "Desbloqueada"
   },
+  "liveTranslation": {
+    "noDisplays": "No hay ninguna pantalla disponible para capturar.",
+    "start": "Iniciar traducción de pantalla en directo",
+    "stop": "Detener traducción de pantalla"
+  },
   "menu": {
     "about": "Acerca de",
     "closeProject": "Cerrar proyecto",

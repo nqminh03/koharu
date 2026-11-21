@@ -5,6 +5,7 @@ mod app;
 mod commands;
 mod events;
 mod library;
+mod live;
 mod screen;
 
 use std::sync::Arc;

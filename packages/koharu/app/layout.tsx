@@ -3,7 +3,6 @@ import { ThemeProvider } from 'next-themes'
 import localFont from 'next/font/local'
 
 import './globals.css'
-import Providers from '@/app/providers'
 
 const notoSans = localFont({
   src: './fonts/NotoSans-VF.ttf',
@@ -38,7 +37,7 @@ function RootLayout({
     >
       <body className='antialiased' style={{ backgroundColor: 'transparent' }}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-          <Providers>{children}</Providers>
+          {children}
         </ThemeProvider>
       </body>
     </html>
